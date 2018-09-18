@@ -32,9 +32,9 @@
       // .removeClass() クラスを削除します。
       $(function(){
         $('.nav > li').on('click',function(){
-          var index = $(this).index();
+          var navIndex = $(this).index();
           $('.contents').children('li').addClass('is-hidden');
-          $('.contents').children('li').eq(index).removeClass('is-hidden');
+          $('.contents').children('li').eq(navIndex).removeClass('is-hidden');
         });
       });
     </script>
