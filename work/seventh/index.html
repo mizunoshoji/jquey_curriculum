@@ -34,6 +34,46 @@
       // .data() 要素のdata属性を取得します。
       // .width() 要素の幅を取得します。
       // .length 要素の個数を取得します。
+
+      $(function(){
+
+        var slideWidth = $('.slider-list > li').width();  //スライドの幅
+        var slideNum = $('.slider-list > li').length;  //スライドの数
+        var slideIndex = 0; //初期値
+
+        $('.slider-ctrl-btn').on('click', function(){ //ボタンがクリックされたら、
+          var btnData = $(this).data('ctrl'); //クリックされたボタンのデータ属性を取得
+          //データ属性の値が,nextならslideNum+1,prevならslideNum-1
+          if(btnData == 'next'){
+            slideIndex++;
+          }
+          else if(btnData == 'prev'){
+            slideIndex--;
+          }
+          //slideIndexが0より小さいなら最後のスライドへ。スライド数の上限超えたら最初のスライドへ
+          if(slideIndex < 0){
+            slideIndex = slideNum - 1;
+          }
+          else if(slideIndex > slideNum - 1){
+            slideIndex = 0;
+          }
+          //スライド幅 * スライド数 分を,左に,500ミリ秒かけて,移動させる
+          $('.slider-list').stop().animate({
+            left: -slideWidth * slideIndex
+          },500);
+        })
+
+      })
+
+//画像の位置情報を作れてない。配列に位置情報を格納？それを活用する。
+
+
+
+
+
+
+
+
     </script>
   </body>
 </html>
