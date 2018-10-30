@@ -42,6 +42,30 @@
       // .offset().top 要素の位置を取得します。
       // .fadeIn() 要素をフェードインさせる。
       // .fadeOut() 要素をフェードアウトさせる。
+
+      $(function(){
+
+        $(window).scroll(function(){    //windowがスクロールされたとき
+          var scrollTop = $(this).scrollTop();  //画面のスクロール位置を取得
+          scrollTop >= 100 ? $('.scrollTopBtn').fadeIn():$('.scrollTopBtn').fadeOut();  //三項演算子で記述
+        })
+
+        $('.scrollTopBtn').on('click', function(){
+          $('html,body').animate({scrollTop: 0});
+        })
+
+        $('.menu__btn').on('click', function(){  //ボタンクリックで
+          var btnData = $(this).data('scroll-place-type');  //そのdata属性取る
+
+          $('.title').each(function(){
+            var titleData = $(this).data('scroll-place-type');  //titleのdata属性をeachで取得
+            if(btnData === titleData){    //menu__btnとtitileのデータ属性が等しいなら
+              var position = $(this).offset().top; //dataが一致したタイトルの要素のページの一番上からの位置を取得
+            }
+            $('html,body').animate({scrollTop: position});  //p.titileの上端を画面の上端に移動させる。
+          })
+        })
+      })
     </script>
   </body>
 </html>

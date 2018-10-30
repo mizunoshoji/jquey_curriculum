@@ -57,8 +57,8 @@
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
       $(function(){
-        $('.menu__list').children().hover(function(){
-          $(this).children('p').next().stop().slideDown();
+        $('.menu__list').children().hover(function(){        //listの子要素に
+          $(this).children('p').next().stop().slideDown();   //ホバーしたらその子要素の次の要素すなわち非表示になってるリストをスライド
         },
         function(){
           $(this).children('p').next().stop().slideUp();

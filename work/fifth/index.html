@@ -100,20 +100,20 @@
       $(function() {
         function search_filter(language){
           $('ul > li').show();
-          if(language == 'all') {
+          if(language === 'all') {
             return;
           }
           $('ul > li').each(function(){
             var itemData = $(this).data('category-type');
-            if(itemData != language){
+            if(itemData !== language){
               $(this).hide();
             }
           })
         }
 
         $('select').change(function(){
-        language = $(this).val();
-        search_filter(language);
+          var language = $(this).val();
+          search_filter(language);
         })
       })
     </script>
