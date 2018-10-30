@@ -37,32 +37,32 @@
 
       $(function(){
         var slideNum = $('.slider-list > li').length,  //画像の枚数
-            slideWidth = 0,
-            slidePosition = [];
+            slidePosition = [],  //位置情報を入れる配列
+            currentSlide = 0;  //現在のスライド位置を入れる変数
 
-        for(i = 0; i < slideNum; i++){
+        for(var i = 0; i < slideNum; i++){
           if(i === 0){
-            slidePosition[i] = 0;
+            slidePosition.push(i);
+          } else {
+            var slideLength = slidePosition[i - 1] + $('.slider-list > li').eq(i - 1).width();
+            slidePosition.push(slideLength);
           }
-          else{
-            slideWidth += $('.slider-list > li').eq(i).width(); //画像の幅を一枚ずつ取得 0番目の幅、１番目の幅...と順に。 ここで前の数値に足していく
-            slidePosition.push(slideWidth);
-          }
-
         }
-        // console.log(slidePosition);  //[0, 600, 1200, 1800]
-        i=0;  // iの初期化 i=4になってるから0に戻しておく
-
+        // console.log(slidePosition);  // [0, 600, 1200, 1800]
         $('.slider-ctrl-btn').on('click', function(){
           var btnData = $(this).data('ctrl');  //ボタンのデータ属性を取得
-          btnData === 'next' ? slidePosition[i++] : slidePosition[i--]; //nextならインデックスを+1,nextではないなら-1 三項演算子でかく
-          if(i < 0){
-            i = slideNum - 1;  //最後のスライドのインデックス
+          if(btnData === 'next'){
+            slidePosition[currentSlide++];
+            if(currentSlide > slidePosition.length - 1){
+              currentSlide = 0;  //最初のスライドのインデックス
+            }
+          } else if(btnData === 'prev'){
+            slidePosition[currentSlide--];
+            if(currentSlide < 0){
+              currentSlide = slidePosition.length - 1;  //最後のスライドのインデックス
+            }
           }
-          else if(i > slideNum - 1){
-            i = 0;  //最初のスライドのインデックス
-          }
-          $('.slider-list').stop().animate({left: -slidePosition[i]});  //配列[i]の値の位置に移動する
+          $('.slider-list').stop().animate({left: -slidePosition[currentSlide]});  //配列[i]の値の位置に移動する
         })
       })
     </script>

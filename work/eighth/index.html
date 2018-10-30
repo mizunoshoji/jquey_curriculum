@@ -61,8 +61,8 @@
             var titleData = $(this).data('scroll-place-type');  //titleのdata属性をeachで取得
             if(btnData === titleData){    //menu__btnとtitileのデータ属性が等しいなら
               var position = $(this).offset().top; //dataが一致したタイトルの要素のページの一番上からの位置を取得
+              $('html,body').animate({scrollTop: position});  //p.titileの上端を画面の上端に移動させる。
             }
-            $('html,body').animate({scrollTop: position});  //p.titileの上端を画面の上端に移動させる。
           })
         })
       })
