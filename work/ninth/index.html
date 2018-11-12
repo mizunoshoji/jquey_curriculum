@@ -17,15 +17,19 @@
     <script>
     $(function(){
       $.ajax({
-        url: './data.json'
+        url: './data.json' 
       })
       .done(function(data) {
         var template = '';
-        for(i = 0; i < data.colorsArray.length; i ++){
-          template = template += '<li class="colorList__item"><p class="colorList__title" style="background-color: ' + data.colorsArray[i].hexValue + ';">' + data.colorsArray[i].colorName + '</p></li>';
-          $('.colorList').html(template);
-        }
+        $.each(data.colorsArray, function(index, item){
+          template += '<li class="colorList__item"><p class="colorList__title" style="background-color: ' + item.hexValue + ';">' + item.colorName + '</p></li>';
+        });
+        // for(i = 0; i < data.colorsArray.length; i ++){
+        //   template += '<li class="colorList__item"><p class="colorList__title" style="background-color: ' + data.colorsArray[i].hexValue + ';">' + data.colorsArray[i].colorName + '</p></li>';  //te
+        // }
+        $('.colorList').html(template);
       });
+
     })
       // 今回のカリキュラムではAjax（XMLHttpRequest）というJavaScriptの特殊な機能を使います。
       // この機能はブラウザのセキュリティ機能によってはサーバーを立てないとうまく動作しない可能性があるので、サーバーを立てる必要があります。
