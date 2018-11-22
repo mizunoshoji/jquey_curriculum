@@ -30,47 +30,8 @@
 
         var currentPage = 0;  //ページ初期設定 クリックのたびに０にならないように
 
-        function createTemplate(data) {
-          // console.log(data);
-          //テンプレート作成のための変数定義
-          var template = '';
-          //結果がない、ならば、
-          if(data.hits === 0) {
-            $('.lists').before('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
-          } else {
-            //data.Itemsに対して順番に以下の処理を行う
-            $.each(data.Items, function(index, item) {
-            //データを変数に代入
-            var itemUrl = data.Items[index].Item.itemUrl,  //楽天ブックスのページにいくためのURL
-                imageUrl = data.Items[index].Item.largeImageUrl,
-                title = data.Items[index].Item.title,
-                author = data.Items[index].Item.author,
-                publisherName = data.Items[index].Item.publisherName;
-
-            //取得したデータを組み込んだテンプレートを作成
-            template += "<li class='lists__item'><div class='lists__item__inner'><a href='"+itemUrl+"' class='lists__item__link' target='_blank'><img src='"+ imageUrl+"' class='lists__item__img' alt='"+title+"'><p class='lists__item__detail'>作品名：　"+title+"</p><p class='lists__item__detail'>作者　：　"+author+"</p><p class='lists__item__detail'>出版社：　"+publisherName+"</p></a></div></li>";
-            });
-            //DOM操作・リストを差し込む  子要素の先頭に追加
-            $('.lists').prepend(template);
-          }
-        }
-
-        function showErrorMessage(inputText) {
-          if(inputText === "") {
-            //条件１：入力がない ならば
-            $('.lists').before('<div class="error__message">検索キーワードを入力してください。</div>');
-          } else if (inputText.length < 2 && !inputText.match(/[\u3400-\u9FFF]/)) {
-            // 条件２：２文字より小さい かつ 漢字ではない ならば
-            $('.lists').before('<div class="error__message">検索キーワードは、半角2文字もしくは全角1文字以上、ひらがな・カタカナ・記号の場合は2文字以上を入力してください。</div>');
-            }
-        }
-
-        function removeMessages() {
-          //ヒットなしメッセージを消す
-          $('.message').remove();
-          //エラーメッセージを消す
-          $('.error__message').remove();
-        }
+        //検索ボタンが押されたとき、関数searchBooksを実行
+        $('.search__btn').on('click', searchBooks);
 
         function searchBooks() {
 
@@ -80,12 +41,13 @@
           var inputText = $('.search__text__input').val();
           //検索ワードが変わっていたら
           $('.search__text__input').change(function(){
+            console.log('change');
             //リストを消す
             $('.lists__item').remove();
             //ページを０にする
             currentPage = 0;
           });
-          //検索をクリックするたびにページ数を追加
+          //検索をクリックするページ数を追加
           currentPage += 1;
           //Ajaxで楽天APIにテータをリクエストして受け取る
           //オプション指定する
@@ -108,8 +70,50 @@
           .fail(showErrorMessage(inputText));
         }
 
-        //検索ボタンが押されたとき、関数searchBooksを実行
-        $('.search__btn').on('click', searchBooks);
+        function createTemplate(data) {
+          // console.log(data);
+          //テンプレート作成のための変数定義
+          var template = '';
+          //結果がない、ならば、
+          if(data.hits === 0) {
+            $('.lists').before('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
+          } else {
+            //data.Itemsに対して順番に以下の処理を行う
+            $.each(data.Items, function(index, item) {
+              //データを変数に代入
+              var itemUrl = this.Item.itemUrl,  //楽天ブックスのページにいくためのURL
+                  imageUrl = this.Item.largeImageUrl,
+                  title = this.Item.title,
+                  author = this.Item.author,
+                  publisherName = this.Item.publisherName;
+
+              //取得したデータを組み込んだテンプレートを作成
+              template += "<li class='lists__item'>' +'<div class='lists__item__inner'><a href='"+itemUrl+"' class='lists__item__link' target='_blank'><img src='"+ imageUrl+"' class='lists__item__img' alt='"+title+"'><p class='lists__item__detail'>作品名：　"+title+"</p><p class='lists__item__detail'>作者　：　"+author+"</p><p class='lists__item__detail'>出版社：　"+publisherName+"</p></a></div></li>";
+            });
+            //DOM操作・リストを差し込む  子要素の先頭に追加
+            $('.lists').prepend(template);
+          }
+        }
+
+        function showErrorMessage(inputText) {
+          if(inputText === "") {
+            //条件１：入力がない ならば
+            $('.lists').before('<div class="error__message">検索キーワードを入力してください。</div>');
+          } else if (inputText.length < 2) {
+            // 条件２：２文字より小さい かつ 漢字ではない ならば
+            $('.lists').before('<div class="error__message">検索キーワードは、半角2文字もしくは全角1文字以上、ひらがな・カタカナ・記号の場合は2文字以上を入力してください。</div>');
+          }
+        }
+
+        function removeMessages() {
+          //ヒットなしメッセージを消す
+          $('.message').remove();
+          //エラーメッセージを消す
+          $('.error__message').remove();
+        }
+
+
+
 
       });
       // 楽天ブックスの総合検索APIを使って製作してください。
