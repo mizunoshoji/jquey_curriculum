@@ -29,26 +29,25 @@
       $(function(){
 
         var currentPage = 0;  //ページ初期設定 クリックのたびに０にならないように
+        var preWord = '';  //前のワードの保持のため、グローバルで宣言
 
         //検索ボタンが押されたとき、関数searchBooksを実行
-        $('.search__btn').on('click', searchBooks);
+        $('.search__btn').on('click', function(){
+          searchBooks();
+        });
 
         function searchBooks() {
-
           removeMessages();  //メッセージがあれば消す
           //リクエスト用の変数を用意
           //検索ワードを取得
           var inputText = $('.search__text__input').val();
-          //検索ワードが変わっていたら
-          $('.search__text__input').change(function(){
-            console.log('change');
-            //リストを消す
-            $('.lists__item').remove();
-            //ページを０にする
-            currentPage = 0;
-          });
-          //検索をクリックするページ数を追加
-          currentPage += 1;
+          //条件  キーワードの比較 検索ワードが変わっていたら、前の検索結果を消す
+          if(inputText !== preWord ){
+            $('.lists__item').remove();  //リストを消す
+            currentPage = 0;  //ページを０にする
+          }
+
+          currentPage += 1;  //ページ数を追加
           //Ajaxで楽天APIにテータをリクエストして受け取る
           //オプション指定する
           $.ajax({
@@ -65,15 +64,19 @@
             }
          })
           //通信が完了したときの処理
-          .done(createTemplate)
+          .done(function(data){
+            createTemplate(data);
+            preWord = $('.search__text__input').val();  //入力されたテキストの保持
+          })
           //通信失敗時に実行する処理
-          .fail(showErrorMessage(inputText));
+          .fail(function(){
+            showErrorMessage(inputText);
+          })
         }
 
         function createTemplate(data) {
-          // console.log(data);
-          //テンプレート作成のための変数定義
-          var template = '';
+
+          var template = '';  //テンプレート作成のための変数定義
           //結果がない、ならば、
           if(data.hits === 0) {
             $('.lists').before('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
@@ -88,10 +91,19 @@
                   publisherName = this.Item.publisherName;
 
               //取得したデータを組み込んだテンプレートを作成
-              template += "<li class='lists__item'>' +'<div class='lists__item__inner'><a href='"+itemUrl+"' class='lists__item__link' target='_blank'><img src='"+ imageUrl+"' class='lists__item__img' alt='"+title+"'><p class='lists__item__detail'>作品名：　"+title+"</p><p class='lists__item__detail'>作者　：　"+author+"</p><p class='lists__item__detail'>出版社：　"+publisherName+"</p></a></div></li>";
+              template += '<li class="lists__item">'
+                        + '<div class="lists__item__inner">'
+                        + '<a href="' + itemUrl + '" class="lists__item__link" target="_blank">'
+                        + '<img src="' + imageUrl + '" class="lists__item__img" alt="' + title + '">'
+                        + '<p class="lists__item__detail">作品名：　' + title + '</p>'
+                        + '<p class="lists__item__detail">作者　：　' + author + '</p>'
+                        + '<p class="lists__item__detail">出版社：　' + publisherName + '</p>'
+                        + '</a>'
+                        + '</div>'
+                        + '</li>';
             });
-            //DOM操作・リストを差し込む  子要素の先頭に追加
-            $('.lists').prepend(template);
+
+            $('.lists').prepend(template);  //DOM操作・リストを差し込む  子要素の先頭に追加
           }
         }
 
@@ -100,20 +112,15 @@
             //条件１：入力がない ならば
             $('.lists').before('<div class="error__message">検索キーワードを入力してください。</div>');
           } else if (inputText.length < 2) {
-            // 条件２：２文字より小さい かつ 漢字ではない ならば
+            // 条件２：２文字より小さい
             $('.lists').before('<div class="error__message">検索キーワードは、半角2文字もしくは全角1文字以上、ひらがな・カタカナ・記号の場合は2文字以上を入力してください。</div>');
           }
         }
 
         function removeMessages() {
-          //ヒットなしメッセージを消す
-          $('.message').remove();
-          //エラーメッセージを消す
-          $('.error__message').remove();
+          $('.message').remove();  //ヒットなしメッセージを消す
+          $('.error__message').remove();  //エラーメッセージを消す
         }
-
-
-
 
       });
       // 楽天ブックスの総合検索APIを使って製作してください。
