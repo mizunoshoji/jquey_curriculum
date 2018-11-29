@@ -45,6 +45,7 @@
           if(inputText !== preWord ){
             $('.lists__item').remove();  //リストを消す
             currentPage = 0;  //ページを０にする
+            preWord = inputText;
           }
 
           currentPage += 1;  //ページ数を追加
@@ -66,7 +67,6 @@
           //通信が完了したときの処理
           .done(function(data){
             createTemplate(data);
-            preWord = $('.search__text__input').val();  //入力されたテキストの保持
           })
           //通信失敗時に実行する処理
           .fail(function(){
